@@ -1,21 +1,19 @@
-// database_helper.js
-require('dotenv').config();  // dotenv load kar do
+const { Pool } = require("pg");
+require("dotenv").config();
 
-const mysql2DB = require('mysql2');
-
-const pool = mysql2DB.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,  // ye .env ke variable ke naam ke same rakho
+  ssl: {
+    rejectUnauthorized: false  // Render ke PostgreSQL ke liye SSL zaroori hai
+  }
 });
 
-pool.connect((err) => {
-    if (err) {
-        console.error('Database connection failed: ', err);
-        return;
-    }
-    console.log(' Connected to the database.');
-});
+pool.connect()
+  .then(() => {
+    console.log("Connected to PostgreSQL database.");
+  })
+  .catch(err => {
+    console.error(" Database connection failed:", err);
+  });
 
 module.exports = pool;
